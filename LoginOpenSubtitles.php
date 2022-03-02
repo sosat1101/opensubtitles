@@ -35,7 +35,7 @@ class LoginOpenSubtitles
     /**
      * @throws Exception
      */
-    public function getLoginResult(): string|array|static
+    public function login(): string|array|static
     {
         $result = curl_exec($this->ch);
         if (curl_exec($this->ch) === false) {
@@ -49,8 +49,12 @@ class LoginOpenSubtitles
         return $this;
     }
 
-    public function getAccessToken()
+    public function getLoginResult(): array
     {
+        return self::$loginResult;
+    }
+
+    public function getAccessToken() {
         return self::$loginResult['token'];
     }
 

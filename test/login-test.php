@@ -1,6 +1,6 @@
 <?php
 
-include 'LoginOpenSubtitles.php';
+include '../LoginOpenSubtitles.php';
 
 $username = 'pipilu';
 $password = 'dfcmbb977';
@@ -9,7 +9,7 @@ $loginOpenSubtitles1 = new LoginOpenSubtitles($username, $password, $apiKey);
 
 
 
-   $a1 =  $loginOpenSubtitles1->getLoginResult()->getAccessToken();
+   $a1 =  $loginOpenSubtitles1->login()->getLoginResult();
    var_dump($a1);
 
 

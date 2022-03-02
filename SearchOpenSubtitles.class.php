@@ -31,7 +31,7 @@ class SearchOpenSubtitles
         'year' => 0,                // integer   Filter by movie/episode year
     ];
 
-      private mixed $ch;
+    private mixed $ch;
 
     private array $curlOption = [
         CURLOPT_URL => "https://api.opensubtitles.com/api/v1/subtitles",
@@ -41,47 +41,60 @@ class SearchOpenSubtitles
         CURLOPT_HTTPGET => true,
     ];
 
-    public function __construct(array $parameters)
+
+    private mixed $ch;
+    private string $username;
+    private string $password;
+    private string $apiKey;
+    public static array $loginResult;
+
+    public function __construct(string $apiKey)
     {
-        $this->initParameters($parameters);
-        $this->init();
+
+        $this->apiKey = $apiKey;
+        $this->initCurl();
     }
 
-    private function initParameters(array $parameters)
+    private function initCurl()
     {
-        foreach ($parameters as $key => $value) {
-            if (array_key_exists($key, $this->defaultParameters)) {
-                $this->defaultParameters[$key] = $value;
-            }
-        }
+        $httpHeader = ['Api-Key:' . $this->apiKey, 'Content-Type:application/json; charset=utf-8'];
+        $this->ch = curl_init();
+        curl_setopt($this->ch, CURLOPT_URL, "https://api.opensubtitles.com/api/v1/login");
+        curl_setopt($this->ch, CURLOPT_HTTPGET, true);
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $curlBody);
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, false,);
+        curl_setopt($this->ch, CURLOPT_HTTPHEADER, $httpHeader);
     }
 
-    private function init()
-    {
-        foreach ($this->defaultParameters as $key => $value) {
-            if (!empty($value)) {
-                $this->curlOption[CURLOPT_URL] .= "/" . $key . "-" . $value;
-            }
-        }
-    }
 
     /**
      * @throws Exception
      */
-    public function getCurlResult(): array|string
+    public function login(): string|array|static
     {
-        $this->ch = curl_init();
-        curl_setopt_array($this->ch, $this->curlOption);
         $result = curl_exec($this->ch);
         if (curl_exec($this->ch) === false) {
             return 'Curl error: ' . curl_error($this->ch);
         }
+        if (200 !== curl_getinfo($this->ch, CURLINFO_HTTP_CODE)) {
+            return new Exception('Response ERROR: httpCode:' . curl_getinfo($this->ch, CURLINFO_HTTP_CODE));
+        }
         curl_close($this->ch);
-        return $this->toArray($result);
+        self::$loginResult = $this->toArray($result);
+        return $this;
+    }
+
+    public function getAccessToken()
+    {
+        return self::$loginResult['token'];
     }
 
     private function toArray(string $json): array
     {
         return json_decode($json, true);
     }
+
+
 }
