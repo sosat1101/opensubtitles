@@ -50,6 +50,11 @@ class DownloadOpenSubtitles
     {
         $url = $this->downloadResult['link'];
         $handle = fopen($url, 'r');
+        $buffer = '';
+        ob_start(function ($chunk) use ($buffer) {
+            return $chunk = $buffer;
+        }, 64);
+
 
     }
 }
