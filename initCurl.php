@@ -28,9 +28,7 @@ class initCurl
     public function search(array $field)
     {
         $httpHeader = ['Api-Key:' . self::ApiKey, 'Content-Type:application/json; charset=utf-8'];
-        $body = http_build_query($field);
         curl_setopt($this->ch, CURLOPT_POST, false);
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $body);
         curl_setopt($this->ch, CURLOPT_HTTPHEADER, $httpHeader);
         return $this;
     }
@@ -42,12 +40,14 @@ class initCurl
 
     public function getResponse(): Exception|array|string
     {
+
         $result = curl_exec($this->ch);
+//        var_dump($result);
         if (curl_exec($this->ch) === false) {
             return 'Curl error: ' . curl_error($this->ch);
         }
         if (200 !== curl_getinfo($this->ch, CURLINFO_HTTP_CODE)) {
-            return new Exception('Response ERROR: httpCode:' . curl_getinfo($this->ch, CURLINFO_HTTP_CODE));
+            return 'Response ERROR: httpCode:' . curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
         }
         curl_close($this->ch);
         $this->result = $this->toArray($result);

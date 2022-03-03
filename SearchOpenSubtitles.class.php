@@ -5,7 +5,7 @@ include "initCurl.php";
 class SearchOpenSubtitles
 {
     const URL = 'https://api.opensubtitles.com/api/v1/subtitles';
-    public static array $searchResult;
+    public array $searchResult;
 
     private array $defaultParameters = [
         'ai_translated' => '',      // string    exclude, include (default: exclude)
@@ -50,10 +50,8 @@ class SearchOpenSubtitles
             }
         }
 
-        $initCurl = new initCurl(self::URL);
-        return ($initCurl);
-//        self::$searchResult = $initCurl->search($presentParameters)->getResponse();
-
-//        return self::$searchResult;
+        $initCurl = new initCurl(self::URL.'?'.http_build_query($presentParameters));
+        $this->searchResult = $initCurl->search($presentParameters)->getResponse();
+        return $this->searchResult;
     }
 }
