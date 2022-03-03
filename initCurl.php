@@ -25,7 +25,7 @@ class initCurl
         return $this;
     }
 
-    public function search(array $field)
+    public function search(array $field): static
     {
         $httpHeader = ['Api-Key:' . self::ApiKey, 'Content-Type:application/json; charset=utf-8'];
         curl_setopt($this->ch, CURLOPT_POST, false);
@@ -33,16 +33,19 @@ class initCurl
         return $this;
     }
 
-    public function download()
+    public function download(array $body, $access_token): static
     {
-
+        $httpHeader = ['Authorization:' . $access_token, 'Api-Key:' . self::ApiKey, 'Content-Type:application/json; charset=utf-8'];
+        curl_setopt($this->ch, CURLOPT_POST, true);
+        curl_setopt($this->ch, CURLOPT_HTTPHEADER, $httpHeader);
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($body));
+        return $this;
     }
 
     public function getResponse(): Exception|array|string
     {
 
         $result = curl_exec($this->ch);
-//        var_dump($result);
         if (curl_exec($this->ch) === false) {
             return 'Curl error: ' . curl_error($this->ch);
         }
@@ -50,8 +53,7 @@ class initCurl
             return 'Response ERROR: httpCode:' . curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
         }
         curl_close($this->ch);
-        $this->result = $this->toArray($result);
-        return $this->result;
+        return $this->toArray($result);
     }
 
     private function toArray(string $json): array

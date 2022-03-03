@@ -1,5 +1,5 @@
 <?php
-include "initCurl.php";
+include_once "initCurl.php";
 class LoginOpenSubtitles
 {
 
@@ -7,7 +7,7 @@ class LoginOpenSubtitles
     private string $username;
     private string $password;
     const URL = 'https://api.opensubtitles.com/api/v1/login';
-    public static array $loginResult;
+    public array $loginResult;
 
     public function __construct(string $username, string $password)
     {
@@ -18,12 +18,12 @@ class LoginOpenSubtitles
     public function getResult(): array
     {
         $initCurl = new initCurl(self::URL);
-        self::$loginResult = $initCurl->login($this->username, $this->password)->getResponse();
-        return self::$loginResult;
+        $this->loginResult = $initCurl->login($this->username, $this->password)->getResponse();
+        return $this->loginResult;
     }
 
     public function getAccessToken()
     {
-        return self::$loginResult['token'];
+        return $this->loginResult['token'];
     }
 }

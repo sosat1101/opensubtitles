@@ -41,7 +41,7 @@ class SearchOpenSubtitles
         }
     }
 
-    public function getResult()
+    public function getResult(): Exception|array|string
     {
         $presentParameters = [];
         foreach ($this->defaultParameters as $key => $value) {
