@@ -6,6 +6,13 @@ class DownloadOpenSubtitles
 {
     private array $defaultParameters = [
         'file_id' => 0,      // integer    file_id from /subtitles search results
+        'sub_format' => '',
+        'file_name' => '',
+        'in_fps' => '',
+        'out_fps' => '',
+        'timeshift' => '',
+        'force_download' => '',
+
     ];
     const URL = 'https://api.opensubtitles.com/api/v1/download';
     private array $downloadResult;
@@ -23,6 +30,9 @@ class DownloadOpenSubtitles
     {
         $presentParameters = [];
         foreach ($this->defaultParameters as $key => $value) {
+            if ($key == 'force_download') {
+                $presentParameters[$key] = $value;
+            }
             if (!empty($value)) {
                 $presentParameters[$key] = $value;
             }
@@ -34,5 +44,12 @@ class DownloadOpenSubtitles
         $initCurl = new initCurl(self::URL);
         $this->downloadResult = $initCurl->download($presentParameters, $access_token)->getResponse();
         return $this->downloadResult;
+    }
+
+    public function getFile()
+    {
+        $url = $this->downloadResult['link'];
+        $handle = fopen($url, 'r');
+
     }
 }
