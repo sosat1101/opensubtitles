@@ -46,15 +46,9 @@ class DownloadOpenSubtitles
         return $this->downloadResult;
     }
 
-    public function getFile()
+    public function getLink()
     {
-        $url = $this->downloadResult['link'];
-        $handle = fopen($url, 'r');
-        $buffer = '';
-        ob_start(function ($chunk) use ($buffer) {
-            return $chunk = $buffer;
-        }, 64);
-
+        return $this->downloadResult['link'];
 
     }
 }
