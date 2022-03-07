@@ -1,15 +1,13 @@
 <?php
-
-include "initCurl.php";
-
-class SearchOpenSubtitles
+include_once "OpenSubtitles.php";
+class SearchOpenSubtitles extends OpenSubtitles
 {
     const URL = 'https://api.opensubtitles.com/api/v1/subtitles';
     public array $searchResult;
 
     private array $defaultParameters = [
         'ai_translated' => '',      // string    exclude, include (default: exclude)
-        'episode_number' => 0,      // integer   For Tvshows
+        'episode_number' => 0,      // integer   For Tv shows
         'foreign_parts_only' => '', // string    foreign_parts_only
         'hearing_impaired' => '',   // string    include, exclude, only. (default: include)
         'id' => 0,                  // integer   ID of the movie or episode
@@ -41,7 +39,7 @@ class SearchOpenSubtitles
         }
     }
 
-    public function getResult(): Exception|array|string
+    public function initCurl($url = self::URL)
     {
         $presentParameters = [];
         foreach ($this->defaultParameters as $key => $value) {
@@ -49,9 +47,22 @@ class SearchOpenSubtitles
                 $presentParameters[$key] = $value;
             }
         }
+        $url = $url.'?'.http_build_query($presentParameters);
+        $this->ch = curl_init();
+        curl_setopt($this->ch, CURLOPT_URL, $url);
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, false,);
 
-        $initCurl = new initCurl(self::URL.'?'.http_build_query($presentParameters));
-        $this->searchResult = $initCurl->search($presentParameters)->getResponse();
+        $httpHeader = ['Api-Key:' . self::ApiKey, 'Content-Type:application/json; charset=utf-8'];
+        curl_setopt($this->ch, CURLOPT_POST, false);
+        curl_setopt($this->ch, CURLOPT_HTTPHEADER, $httpHeader);
+    }
+
+    public function getResult()
+    {
+        $this->searchResult = $this->getResponse();
         return $this->searchResult;
     }
+
 }

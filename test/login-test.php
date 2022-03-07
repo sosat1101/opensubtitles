@@ -1,14 +1,14 @@
 <?php
 
-include '../LoginOpenSubtitles.class.php';
+include '../LoginOpenSubtitles.php';
 
 $username = 'pipilu';
 $password = 'dfcmbb977';
-$apiKey = 'bCZDNxfGMhcVBtr5fAo7sqj9nmasEHLi';
 $loginOpenSubtitles1 = new LoginOpenSubtitles($username, $password);
 
-$loginOpenSubtitles1->getResult();
-var_dump($loginOpenSubtitles1->getAccessToken());
+$loginOpenSubtitles1->initCurl();
+$loginOpenSubtitles1->getResponse();
+var_dump($loginOpenSubtitles1->getResult());
 
 
 
