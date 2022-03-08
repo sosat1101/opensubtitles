@@ -10,7 +10,7 @@ abstract class OpenSubtitles
     /**
      * @throws Exception
      */
-    public function getResponse(): array|string
+    public function getResponse(): array|string|Exception
     {
         $result = curl_exec($this->ch);
         if (curl_exec($this->ch) === false) {
